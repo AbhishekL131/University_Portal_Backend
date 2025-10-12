@@ -1,0 +1,27 @@
+spring:
+  redis:
+      host: localhost
+      port: 6379
+      timeout: 60000ms
+  cache:
+      type : redis   
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: health, info, metrics, prometheus 
+    endpoint:
+      prometheus:
+        enabled: true         
+  data:
+    mongodb:
+      uri : mongodb+srv://abhishekiiitn_db_user:0hMigDIyIxZjTaFM@cluster0.tiaqb4y.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      database : university_portal
+      auto-index-creation : true
+
+
+
+server:
+  port : 8080    
+
+
