@@ -15,13 +15,15 @@ spring:
         enabled: true         
   data:
     mongodb:
-      uri : mongodb+srv://abhishekiiitn_db_user:0hMigDIyIxZjTaFM@cluster0.tiaqb4y.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      uri : ${MONGODB_URI}
       database : university_portal
       auto-index-creation : true
 
 
 
 server:
-  port : 8080    
+  port : ${PORT:8080  }
+
+
 
 
