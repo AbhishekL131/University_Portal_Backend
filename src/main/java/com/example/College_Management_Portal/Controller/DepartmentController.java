@@ -144,6 +144,7 @@ public class DepartmentController {
         .map(student -> {
             studentService.deleteStudentById(studentId);
             studentCourseService.deleteStudentCourseEntry(studentId);
+            log.info("deleted student successfully");
             return new ResponseEntity<>(HttpStatus.OK);
         })
         .orElseGet(() -> {

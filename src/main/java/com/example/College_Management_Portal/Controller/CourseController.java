@@ -87,7 +87,8 @@ public class CourseController {
         return new ResponseEntity<>(students,HttpStatus.OK);
        })
        .orElseGet(() -> {
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        log.info("course "+courseId+" is invalid or doesn't exist");
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
        });
     }
 
