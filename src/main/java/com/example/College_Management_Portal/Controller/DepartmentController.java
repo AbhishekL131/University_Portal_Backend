@@ -106,7 +106,7 @@ public class DepartmentController {
         }
     }
 
-
+    
     @RateLimit(limit=5,duration=60)
       @GetMapping("/allcourses/{deptId}")
       public ResponseEntity<List<Course>> getAllCoursesOfDept(@PathVariable String deptId){
