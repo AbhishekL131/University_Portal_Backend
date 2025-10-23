@@ -18,6 +18,7 @@ import com.example.College_Management_Portal.Service.DepartmentService;
 import com.example.College_Management_Portal.Service.FacultyService;
 import com.example.College_Management_Portal.Service.StudentService;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,7 +44,10 @@ public class AdminController {
     private AdminService adminService;
 
 
+
+
     @PostMapping("/createFaculty")
+    @Operation(summary = "create a new faculty")
     public ResponseEntity<Faculty> createFaculty(@RequestBody Faculty faculty){
        return deptService.getDepartmentById(faculty.getDeptId())
        .map(dept -> {
