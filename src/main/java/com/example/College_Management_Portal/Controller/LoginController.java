@@ -16,11 +16,13 @@ import com.example.College_Management_Portal.Models.Faculty;
 import com.example.College_Management_Portal.Service.CustomUserDetailsService;
 import com.example.College_Management_Portal.Utils.JwtUtil;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/Login")
 @Slf4j
+@Tag(name = "Login APIs")
 public class LoginController {
 
     @Autowired

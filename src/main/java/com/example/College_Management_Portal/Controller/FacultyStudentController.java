@@ -18,8 +18,11 @@ import com.example.College_Management_Portal.Models.*;
 
 import com.example.College_Management_Portal.Service.*;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/facultyStudent")
+@Tag(name = "Faculty-Student APIs")
 public class FacultyStudentController {
     @Autowired
     private FacultyCourseService facultyCourseService;

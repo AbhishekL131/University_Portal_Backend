@@ -18,12 +18,13 @@ import com.example.College_Management_Portal.Service.DepartmentService;
 import com.example.College_Management_Portal.Service.FacultyService;
 import com.example.College_Management_Portal.Service.StudentService;
 
-
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/Admin")
 @Slf4j
+@Tag(name = "Admin APIs",description = "Admin Login controller under role based access control (RBAC)")
 public class AdminController {
 
     @Autowired

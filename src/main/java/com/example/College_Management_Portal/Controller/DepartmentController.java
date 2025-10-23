@@ -23,11 +23,13 @@ import com.example.College_Management_Portal.Service.FacultyService;
 import com.example.College_Management_Portal.Service.StudentCourseService;
 import com.example.College_Management_Portal.Service.StudentService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/department")
 @Slf4j
+@Tag(name ="Department APIs")
 public class DepartmentController {
     
     @Autowired
