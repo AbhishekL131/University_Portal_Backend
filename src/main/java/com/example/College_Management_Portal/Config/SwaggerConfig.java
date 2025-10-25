@@ -24,7 +24,9 @@ public class SwaggerConfig {
             new Info().title("University Management ERP")
             .description("By Abhishek")
         )
-         .servers(Arrays.asList(new Server().url("http://localhost:8080").description("Local")))
+         .servers(Arrays.asList(new Server().url("http://localhost:8080").description("Local")
+         ,new Server().url("https://university-portal-backend.zeabur.app").description("Deployed")
+         ))
          .tags(Arrays.asList(
             new Tag().name("Login APIs"),
             new Tag().name("Admin APIs"),
