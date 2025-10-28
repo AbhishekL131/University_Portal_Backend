@@ -1,7 +1,7 @@
 spring:
   redis:
-      host: cgk1.clusters.zeabur.com
-      port: 32476
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
       password: ${REDIS_PASSWORD}
       url: ${REDIS_CONNECTION_STRING}
       timeout: 60000ms
