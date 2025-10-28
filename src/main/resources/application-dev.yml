@@ -22,6 +22,10 @@ spring:
       database : ${MONGODB_DATABASE}
       auto-index-creation : true
 
+springdoc:
+  swagger-ui:
+    path: /api-docs
+  
 
 
 server:
