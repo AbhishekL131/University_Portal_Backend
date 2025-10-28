@@ -1,37 +1,36 @@
 spring:
   redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
-      password: ${REDIS_PASSWORD}
-      url: ${REDIS_CONNECTION_STRING}
-      timeout: 60000ms
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    password: ${REDIS_PASSWORD}
+    url: ${REDIS_CONNECTION_STRING}
+    timeout: 60000ms
   cache:
-      type : redis   
-  management:
-    endpoints:
-      web:
-        exposure:
-          include: health, info, metrics, prometheus 
-    endpoint:
-      health:
-        show-details: always
-      prometheus:
-        enabled: true         
+    type: redis
   data:
     mongodb:
-      uri : ${MONGODB_URI}
-      database : ${MONGODB_DATABASE}
-      auto-index-creation : true
+      uri: ${MONGODB_URI}
+      database: ${MONGODB_DATABASE}
+      auto-index-creation: true
 
 springdoc:
   swagger-ui:
     path: /api-docs
-  
-
 
 server:
-  port : 8080
+  port: 8080
 
 
-
-
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: college-management-system
