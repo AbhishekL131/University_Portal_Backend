@@ -31,7 +31,7 @@ public class CourseService {
         return courseRepo.findById(courseId);
     }
 
-    @Cacheable(value="coursesOfDept",key="#deptId")
+  //  @Cacheable(value="coursesOfDept",key="#deptId")
     public List<Course> getByDeptId(String deptId){
         return courseRepo.findCourseByDeptId(deptId);
     }
