@@ -1,5 +1,7 @@
 package com.example.College_Management_Portal.Controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -51,7 +53,10 @@ public class LoginController {
             return new ResponseEntity<>("Invalid credentials",HttpStatus.BAD_REQUEST);
         }
         
-        String jwt = jwtUtil.generateToken(userDetails.getUsername());
+        List<String> roles = userDetails.getAuthorities().stream()
+            .map(auth -> auth.getAuthority().replace("ROLE_", ""))
+            .toList();
+        String jwt = jwtUtil.generateToken(userDetails.getUsername(), roles);
         return new ResponseEntity<>(jwt,HttpStatus.OK);
        }catch(Exception e){
         log.info("Faculty login failed: {}", e.getMessage());
@@ -76,7 +81,10 @@ public class LoginController {
             return new ResponseEntity<>("Invalid credentials",HttpStatus.BAD_REQUEST);
         }
         
-        String jwt = jwtUtil.generateToken(userDetails.getUsername());
+        List<String> roles = userDetails.getAuthorities().stream()
+            .map(auth -> auth.getAuthority().replace("ROLE_", ""))
+            .toList();
+        String jwt = jwtUtil.generateToken(userDetails.getUsername(), roles);
         return new ResponseEntity<>(jwt,HttpStatus.OK);
        }catch(Exception e){
         log.warn("Admin login failed: {}", e.getMessage());

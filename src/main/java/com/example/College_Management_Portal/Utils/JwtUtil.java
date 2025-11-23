@@ -1,6 +1,7 @@
 package com.example.College_Management_Portal.Utils;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.crypto.SecretKey;
@@ -24,6 +25,11 @@ public class JwtUtil {
         return claims.getSubject();
     }
 
+    public List<String> extractRoles(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("roles", List.class);
+    }
+
     public Date extractExpiration(String token) {
         return extractAllClaims(token).getExpiration();
     }
@@ -40,9 +46,9 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
     
-
-    public String generateToken(String username) {
+    public String generateToken(String username, List<String> roles) {
         Map<String, Object> claims = new HashMap<>();
+        claims.put("roles", roles);
         return createToken(claims, username);
     }
 
@@ -53,7 +59,7 @@ public class JwtUtil {
                 .header().empty().add("typ","JWT")
                 .and()
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 50)) // 5 minutes expiration time
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 50))
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -61,6 +67,4 @@ public class JwtUtil {
     public Boolean validateToken(String token) {
         return !isTokenExpired(token);
     }
-
-
 }
