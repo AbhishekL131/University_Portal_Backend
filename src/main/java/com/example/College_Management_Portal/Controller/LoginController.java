@@ -41,11 +41,20 @@ public class LoginController {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(faculty.getUserName(),faculty.getPassword()));
         UserDetails userDetails = userDetailsService.loadUserByUsername(faculty.getUserName());
+        
+        // Verify user has Faculty or HOD role
+        boolean hasFacultyRole = userDetails.getAuthorities().stream()
+            .anyMatch(auth -> auth.getAuthority().equals("ROLE_Faculty") || auth.getAuthority().equals("ROLE_HOD"));
+        
+        if (!hasFacultyRole) {
+            log.warn("Non-faculty user attempted faculty login: {}", faculty.getUserName());
+            return new ResponseEntity<>("Invalid credentials",HttpStatus.BAD_REQUEST);
+        }
+        
         String jwt = jwtUtil.generateToken(userDetails.getUsername());
-
         return new ResponseEntity<>(jwt,HttpStatus.OK);
        }catch(Exception e){
-        log.info("error");
+        log.info("Faculty login failed: {}", e.getMessage());
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
        }
     }
@@ -57,10 +66,20 @@ public class LoginController {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(admin.getUserName(),admin.getPassword()));
         UserDetails userDetails = userDetailsService.loadUserByUsername(admin.getUserName());
+        
+        // Verify user has Admin role
+        boolean hasAdminRole = userDetails.getAuthorities().stream()
+            .anyMatch(auth -> auth.getAuthority().equals("ROLE_Admin"));
+        
+        if (!hasAdminRole) {
+            log.warn("Non-admin user attempted admin login: {}", admin.getUserName());
+            return new ResponseEntity<>("Invalid credentials",HttpStatus.BAD_REQUEST);
+        }
+        
         String jwt = jwtUtil.generateToken(userDetails.getUsername());
-
         return new ResponseEntity<>(jwt,HttpStatus.OK);
        }catch(Exception e){
+        log.warn("Admin login failed: {}", e.getMessage());
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
        }
     }

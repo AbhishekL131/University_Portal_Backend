@@ -20,10 +20,6 @@ import com.example.College_Management_Portal.Filter.JwtFilter;
 @EnableWebSecurity
 public class SpringSecurity {
     
-
-    //@Autowired
-  //  private CustomUserDetailsService userDetailsService;
-
     @Autowired
     private JwtFilter jwtFilter;
 
@@ -31,10 +27,18 @@ public class SpringSecurity {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
             .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/Admin/**","/department/**","/Course/**","/Faculty/**","/Student/**").hasRole("Admin")
-            .requestMatchers("/Faculty/**").hasAnyRole("Faculty","HOD","Admin")
-            .requestMatchers("/Course/**","/Student/**","/Faculty/**").hasRole("HOD")
-            .anyRequest().permitAll()
+            .requestMatchers("/Login/**").permitAll()
+            .requestMatchers("/swagger-ui/**","/v3/api-docs/**","/swagger-ui.html").permitAll()
+            .requestMatchers("/api/test-cache/**").permitAll()
+            .requestMatchers("/Admin/**").hasRole("Admin")
+            .requestMatchers("/department/**").hasRole("Admin")
+            .requestMatchers("/Course/**").hasAnyRole("Faculty","HOD","Admin")
+            .requestMatchers("/Faculty/**").hasAnyRole("Faculty","HOD")
+            .requestMatchers("/Student/**").hasAnyRole("Faculty","HOD","Admin")
+            .requestMatchers("/facultyStudent/**").hasAnyRole("Faculty","HOD")
+            .requestMatchers("/studentCourse/**").hasAnyRole("Faculty","HOD","Admin")
+            .requestMatchers("/facultyCourse/**").hasAnyRole("Faculty","HOD","Admin")
+            .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf.disable())
             .addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);
@@ -46,14 +50,6 @@ public class SpringSecurity {
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
-   /*  @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception{
-        AuthenticationManagerBuilder auth = http.getSharedObject(AuthenticationManagerBuilder.class);
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-        return auth.build();
-    } */
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration auth) throws Exception{

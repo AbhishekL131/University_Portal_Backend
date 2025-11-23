@@ -32,6 +32,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<Faculty> facultyOpt = facultyRepository.findFacultyByUserName(userName);
         if (facultyOpt.isPresent()) {
             Faculty faculty = facultyOpt.get();
+            if (faculty.getRoles() == null || faculty.getRoles().isEmpty()) {
+                log.warn("Faculty {} has no roles assigned", userName);
+                throw new UsernameNotFoundException("Faculty has no roles assigned: " + userName);
+            }
             return buildUserDetails(
                 faculty.getUserName(),
                 faculty.getPassword(),
@@ -43,6 +47,10 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<Admin> adminOpt = adminRepository.findByUserName(userName);
         if (adminOpt.isPresent()) {
             Admin admin = adminOpt.get();
+            if (admin.getRoles() == null || admin.getRoles().isEmpty()) {
+                log.warn("Admin {} has no roles assigned", userName);
+                throw new UsernameNotFoundException("Admin has no roles assigned: " + userName);
+            }
             return buildUserDetails(
                 admin.getUserName(),
                 admin.getPassword(),
