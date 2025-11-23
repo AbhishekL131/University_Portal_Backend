@@ -11,7 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
+import org.springframework.security.config.*;
 import com.example.College_Management_Portal.Filter.JwtFilter;
 
 
@@ -41,7 +41,7 @@ public class SpringSecurity {
             .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf.disable())
-            .cors(org.springframework.security.config.Customizer.withDefaults())
+            .cors(Customizer.withDefaults())
             .addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
