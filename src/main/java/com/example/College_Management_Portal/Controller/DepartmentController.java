@@ -52,13 +52,18 @@ public class DepartmentController {
     public ResponseEntity<Department> createDepartment(@RequestBody Department department){
        return deptService.getDepartmentById(department.getDeptId())
        .map(dept-> {
-        deptService.createNewDepartment(department);
-        return new ResponseEntity<>(department,HttpStatus.OK);
+        log.info("department "+department.getDeptId()+" already exists ");
+        return new ResponseEntity<Department>(HttpStatus.CONFLICT);
        })
        .orElseGet(() -> {
-        log.info("department "+department.getDeptId()+" doesnt exist ");
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        deptService.createNewDepartment(department);
+        return new ResponseEntity<>(department,HttpStatus.CREATED);
        });
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Department>> getAllDepartments(){
+        return new ResponseEntity<>(deptService.getAllDepartments(), HttpStatus.OK);
     }
 
 

@@ -8,5 +8,5 @@ import com.example.College_Management_Portal.Models.Department;
 
 @Repository
 public interface DepartmentRepository extends MongoRepository<Department,String>{
-    
+
 }

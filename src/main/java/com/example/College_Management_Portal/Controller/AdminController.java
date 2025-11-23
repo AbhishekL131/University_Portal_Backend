@@ -17,6 +17,10 @@ import com.example.College_Management_Portal.Service.CourseService;
 import com.example.College_Management_Portal.Service.DepartmentService;
 import com.example.College_Management_Portal.Service.FacultyService;
 import com.example.College_Management_Portal.Service.StudentService;
+import java.util.Map;
+import java.util.HashMap;
+import com.example.College_Management_Portal.Repository.CourseRepository;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -110,4 +114,16 @@ public class AdminController {
     }
 
 
+
+    @Autowired
+    private CourseRepository courseRepo;
+
+    @GetMapping("/stats")
+    public ResponseEntity<Map<String, Long>> getStats(){
+        Map<String, Long> stats = new HashMap<>();
+        stats.put("faculty", facultyService.getAllFaculties().stream().count());
+        stats.put("students", studentService.allStudents().stream().count());
+        stats.put("courses", courseRepo.findAll().stream().count());
+        return new ResponseEntity<>(stats, HttpStatus.OK);
+    }
 }

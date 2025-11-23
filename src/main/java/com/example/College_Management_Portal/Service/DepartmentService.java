@@ -1,6 +1,7 @@
 package com.example.College_Management_Portal.Service;
 
 import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,5 +28,9 @@ public class DepartmentService {
 
     public void deleteByDepartmentId(String deptId){
         deptRepo.deleteById(deptId);
+    }
+
+    public List<Department> getAllDepartments(){
+        return deptRepo.findAll();
     }
 }

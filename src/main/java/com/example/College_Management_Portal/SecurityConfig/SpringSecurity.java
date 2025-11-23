@@ -41,6 +41,7 @@ public class SpringSecurity {
             .anyRequest().authenticated()
             )
             .csrf(csrf -> csrf.disable())
+            .cors(org.springframework.security.config.Customizer.withDefaults())
             .addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
