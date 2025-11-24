@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
-import { BookOpen, Users } from 'lucide-react';
+import { BookOpen, Users, Calendar, Clock, ArrowRight } from 'lucide-react';
 
 const FacultyDashboard = () => {
     const [courses, setCourses] = useState([]);
@@ -29,69 +29,107 @@ const FacultyDashboard = () => {
     }, []);
 
     return (
-        <div className="space-y-6">
-            <h1 className="text-2xl font-bold text-gray-900">Faculty Dashboard</h1>
+        <div className="space-y-8">
+            <div className="flex items-center justify-between animate-fade-in">
+                <div>
+                    <h1 className="text-3xl font-bold text-white">Faculty Dashboard</h1>
+                    <p className="text-slate-400 mt-1">Manage your courses and students</p>
+                </div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div
                     onClick={() => navigate('/faculty/courses')}
-                    className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+                    className="glass-card p-8 cursor-pointer hover:bg-white/20 transition-all duration-300 group animate-slide-up"
+                    style={{ animationDelay: '0.1s' }}
                 >
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-blue-100 rounded-lg">
-                            <BookOpen className="w-6 h-6 text-blue-600" />
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="p-4 bg-blue-500/20 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                            <BookOpen className="w-8 h-8 text-blue-400" />
                         </div>
-                        <div>
-                            <p className="text-sm text-gray-500 font-medium">My Courses</p>
-                            <h3 className="text-2xl font-bold text-gray-900">{courses.length}</h3>
+                        <div className="flex items-center text-blue-400 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">
+                            View All <ArrowRight className="w-4 h-4 ml-1" />
                         </div>
+                    </div>
+                    <div>
+                        <h3 className="text-4xl font-bold text-white mb-2">{courses.length}</h3>
+                        <p className="text-slate-400 font-medium">Assigned Courses</p>
                     </div>
                 </div>
 
                 <div
                     onClick={() => navigate('/faculty/students')}
-                    className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+                    className="glass-card p-8 cursor-pointer hover:bg-white/20 transition-all duration-300 group animate-slide-up"
+                    style={{ animationDelay: '0.2s' }}
                 >
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-green-100 rounded-lg">
-                            <Users className="w-6 h-6 text-green-600" />
+                    <div className="flex items-center justify-between mb-6">
+                        <div className="p-4 bg-emerald-500/20 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+                            <Users className="w-8 h-8 text-emerald-400" />
                         </div>
-                        <div>
-                            <p className="text-sm text-gray-500 font-medium">My Students</p>
-                            <h3 className="text-2xl font-bold text-gray-900">{students.length}</h3>
+                        <div className="flex items-center text-emerald-400 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">
+                            View All <ArrowRight className="w-4 h-4 ml-1" />
                         </div>
+                    </div>
+                    <div>
+                        <h3 className="text-4xl font-bold text-white mb-2">{students.length}</h3>
+                        <p className="text-slate-400 font-medium">Total Students</p>
                     </div>
                 </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="p-6 border-b border-gray-100">
-                    <h2 className="text-lg font-semibold text-gray-900">Assigned Courses</h2>
+            <div className="glass-card overflow-hidden animate-slide-up" style={{ animationDelay: '0.3s' }}>
+                <div className="p-6 border-b border-white/10 flex items-center justify-between">
+                    <h2 className="text-xl font-bold text-white">Assigned Courses Overview</h2>
+                    <button className="text-sm text-indigo-400 hover:text-indigo-300 transition-colors">View Schedule</button>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
-                        <thead className="bg-gray-50">
+                        <thead className="bg-white/5">
                             <tr>
-                                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Course Name</th>
-                                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Credits</th>
-                                <th className="px-6 py-3 text-xs font-medium text-gray-500 uppercase">Department</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Course Name</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Credits</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Department</th>
+                                <th className="px-6 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Status</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-white/5">
                             {loading ? (
                                 <tr>
-                                    <td colSpan="3" className="px-6 py-4 text-center text-gray-500">Loading...</td>
+                                    <td colSpan="4" className="px-6 py-8 text-center text-slate-400">
+                                        <div className="flex items-center justify-center gap-2">
+                                            <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" />
+                                            <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-75" />
+                                            <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce delay-150" />
+                                        </div>
+                                    </td>
                                 </tr>
                             ) : courses.length === 0 ? (
                                 <tr>
-                                    <td colSpan="3" className="px-6 py-4 text-center text-gray-500">No courses assigned</td>
+                                    <td colSpan="4" className="px-6 py-8 text-center text-slate-400">No courses assigned</td>
                                 </tr>
                             ) : (
                                 courses.map((course) => (
-                                    <tr key={course.courseId} className="hover:bg-gray-50">
-                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">{course.courseName}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">{course.courseCredits}</td>
-                                        <td className="px-6 py-4 text-sm text-gray-500">{course.deptId}</td>
+                                    <tr key={course.courseId} className="hover:bg-white/5 transition-colors">
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-400 font-bold text-xs">
+                                                    {course.courseName.substring(0, 2).toUpperCase()}
+                                                </div>
+                                                <span className="text-sm font-medium text-white">{course.courseName}</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-slate-300">
+                                            <div className="flex items-center gap-2">
+                                                <Clock className="w-4 h-4 text-slate-500" />
+                                                {course.courseCredits} Credits
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-slate-300">{course.deptId}</td>
+                                        <td className="px-6 py-4">
+                                            <span className="px-2 py-1 rounded-md bg-emerald-500/10 text-emerald-400 text-xs font-medium border border-emerald-500/20">
+                                                Active
+                                            </span>
+                                        </td>
                                     </tr>
                                 ))
                             )}
