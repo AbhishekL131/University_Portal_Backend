@@ -43,8 +43,7 @@ public class LoginController {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(faculty.getUserName(),faculty.getPassword()));
         UserDetails userDetails = userDetailsService.loadUserByUsername(faculty.getUserName());
-        
-        // Verify user has Faculty or HOD role
+
         boolean hasFacultyRole = userDetails.getAuthorities().stream()
             .anyMatch(auth -> auth.getAuthority().equals("ROLE_Faculty") || auth.getAuthority().equals("ROLE_HOD"));
         
@@ -71,10 +70,15 @@ public class LoginController {
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(admin.getUserName(),admin.getPassword()));
         UserDetails userDetails = userDetailsService.loadUserByUsername(admin.getUserName());
+
+        System.out.println("userDetails : "+userDetails);
         
-        // Verify user has Admin role
         boolean hasAdminRole = userDetails.getAuthorities().stream()
             .anyMatch(auth -> auth.getAuthority().equals("ROLE_Admin"));
+
+        List<?> rols = userDetails.getAuthorities().stream().toList();
+
+        System.out.println("rols : "+rols);
         
         if (!hasAdminRole) {
             log.warn("Non-admin user attempted admin login: {}", admin.getUserName());
