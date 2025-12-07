@@ -34,3 +34,7 @@ management:
   metrics:
     tags:
       application: college-management-system
+
+security:
+  jwt:
+    secret-key: ${SECRET_KEY}
