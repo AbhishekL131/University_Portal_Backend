@@ -8,17 +8,17 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.example.College_Management_Portal.Config.RateLimit;
 import com.example.College_Management_Portal.Models.Course;
-
-import com.example.College_Management_Portal.Models.Student;
+import com.example.College_Management_Portal.Models.Faculty;
 
 import com.example.College_Management_Portal.Service.CourseService;
+import com.example.College_Management_Portal.Service.FacultyCourseService;
+import com.example.College_Management_Portal.Service.FacultyService;
 import com.example.College_Management_Portal.Service.StudentCourseService;
 import com.example.College_Management_Portal.Service.StudentService;
 
@@ -39,18 +39,19 @@ public class StudentController {
     private StudentCourseService studentCourseService;
 
     @Autowired
+    private FacultyService facultyService;
+
+    @Autowired
     private CourseService courseService;
 
-
-    @RateLimit(limit=5,duration=60)
-    @GetMapping("/all")
-    public List<Student> getAllStudents(){
-        return studentService.allStudents();
-    }
+    @Autowired
+    private FacultyCourseService facultyCourseService;
     
 
-    @GetMapping("/allcourses/{studentId}")
-    public ResponseEntity<List<Course>> getAllCoursesOfStudent(@PathVariable String studentId){
+    @GetMapping("/allcourses")
+    public ResponseEntity<List<Course>> getAllCoursesOfStudent(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String studentId = studentService.getStudentByUserName(auth.getName()).map(x -> x.getStudentId()).orElseGet(null);
        return studentService.getStudentById(studentId)
        .map(student -> {
         List<Course> courses = studentCourseService.getAllCoursesOfStudent(studentId)
@@ -64,5 +65,29 @@ public class StudentController {
        .orElseGet(() -> {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
        });
+    }
+
+    @GetMapping("/allfaculties")
+    public ResponseEntity<List<Faculty>> getAllFacultiesOfStudent(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String studentId = studentService.getStudentByUserName(auth.getName()).map(x -> x.getStudentId()).orElse(null);
+        return studentService.getStudentById(studentId)
+        .map(student -> {
+            List<Faculty> faculties = studentCourseService.getAllCoursesOfStudent(studentId)
+            .stream()
+            .map(studentCourse -> courseService.getCourseById(studentCourse.getCourseId()))
+            .filter(course -> course.isPresent())
+            .map(course -> course.get())
+            .flatMap(course -> facultyCourseService.getAllFacultiesOfCourse(course.getCourseId()).stream())
+            .map(facultyCourse -> facultyService.getFacultyById(facultyCourse.getFacultyId()))
+            .filter(faculty -> faculty.isPresent())
+            .map(faculty -> faculty.get())
+            .collect(Collectors.toList());
+
+            return new ResponseEntity<>(faculties,HttpStatus.OK);
+        })
+        .orElseGet(() -> {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        });
     }
 }

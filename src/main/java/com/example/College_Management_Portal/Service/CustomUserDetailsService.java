@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.example.College_Management_Portal.Models.Admin;
 import com.example.College_Management_Portal.Models.Faculty;
+import com.example.College_Management_Portal.Models.Student;
 import com.example.College_Management_Portal.Repository.AdminRepository;
 import com.example.College_Management_Portal.Repository.FacultyRepository;
+import com.example.College_Management_Portal.Repository.StudentRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,6 +27,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     private AdminRepository adminRepository;
+
+    @Autowired
+    private StudentRepository studentRepo;
 
     @Override
     public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
@@ -58,10 +63,30 @@ public class CustomUserDetailsService implements UserDetailsService {
             );
         }
 
+
+        Optional<Student> studentOpt = studentRepo.findStudentByUserName(userName);
+        if(studentOpt.isPresent()){
+            Student student = studentOpt.get();
+
+            if(student.getRoles() == null || student.getRoles().isEmpty()){
+                log.warn("student {} has no roles assigned"+userName);
+                throw new UsernameNotFoundException("");
+            }
+
+            return buildUserDetails(
+                student.getUserName(),
+                student.getPassword(),
+                student.getRoles()
+            );
+        }
+
        
         log.warn("User not found: {}", userName);
         throw new UsernameNotFoundException("User not found: " + userName);
     }
+
+
+    
 
     private UserDetails buildUserDetails(String username, String password, List<String> roles) {
         return org.springframework.security.core.userdetails.User.builder()

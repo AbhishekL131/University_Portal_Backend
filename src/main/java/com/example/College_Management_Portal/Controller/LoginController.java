@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.College_Management_Portal.Models.Admin;
 import com.example.College_Management_Portal.Models.Faculty;
+import com.example.College_Management_Portal.Models.Student;
 import com.example.College_Management_Portal.Service.CustomUserDetailsService;
 import com.example.College_Management_Portal.Utils.JwtUtil;
 
@@ -94,6 +95,49 @@ public class LoginController {
         log.warn("Admin login failed: {}", e.getMessage());
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
        }
+    }
+
+
+    @PostMapping("/studentLogin")
+    public ResponseEntity<?> login(@RequestBody Student student){
+        try{
+
+            log.info("we entered try block ");
+
+            log.info("username : "+student.getUserName());
+            log.info("password : "+student.getPassword());
+
+            authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(student.getUserName(),student.getPassword())
+            );
+
+            log.info("here before fetching userDetails ");
+            UserDetails userDetails = userDetailsService.loadUserByUsername(student.getUserName());
+
+
+            log.info("we fetched user details "+userDetails);
+
+
+            boolean hasStudentRole = userDetails.getAuthorities().stream()
+            .anyMatch(auth -> auth.getAuthority().equals("ROLE_Student"));
+
+            if(!hasStudentRole){
+                log.warn("Student login failed");
+                return new ResponseEntity<>("invalid request",HttpStatus.BAD_REQUEST);
+            }
+
+            List<String> roles = userDetails.getAuthorities().stream()
+            .map(auth -> auth.getAuthority().replace("ROLE_","")).toList();
+
+            String jwt = jwtUtil.generateToken(userDetails.getUsername(),roles);
+
+            return new ResponseEntity<>(jwt,HttpStatus.OK);
+
+
+        }catch(Exception e){
+            log.info("error : "+e);
+            return new ResponseEntity<>("Login failed",HttpStatus.BAD_REQUEST);
+        }
     }
 
 

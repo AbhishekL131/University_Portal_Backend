@@ -33,7 +33,7 @@ public class SpringSecurity {
             .requestMatchers("/department/**").hasRole("Admin")
             .requestMatchers("/Course/**").hasAnyRole("Faculty","HOD","Admin")
             .requestMatchers("/Faculty/**").hasAnyRole("Faculty","HOD")
-            .requestMatchers("/Student/**").hasAnyRole("Faculty","HOD","Admin")
+            .requestMatchers("/Student/**").hasAnyRole("Faculty","HOD","Admin","Student")
             .requestMatchers("/facultyStudent/**").hasAnyRole("Faculty","HOD")
             .requestMatchers("/studentCourse/**").hasAnyRole("Faculty","HOD","Admin")
             .requestMatchers("/facultyCourse/**").hasAnyRole("Faculty","HOD","Admin")
