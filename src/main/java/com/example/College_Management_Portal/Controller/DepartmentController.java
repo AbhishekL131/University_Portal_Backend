@@ -75,7 +75,7 @@ public class DepartmentController {
             .stream()
             .filter(f -> f.getRoles().contains("HOD"))
             .findFirst();
-            return new ResponseEntity<>(faculty.get(),HttpStatus.FOUND);
+            return new ResponseEntity<>(FacultyDto.fromEntity(faculty.get()),HttpStatus.FOUND);
         })
         .orElseGet(() -> {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -84,13 +84,13 @@ public class DepartmentController {
 
 
     @GetMapping("/allfaculties/{deptId}")
-    public ResponseEntity<List<Faculty>> getAllFaculties(@PathVariable String deptId){
+    public ResponseEntity<?> getAllFaculties(@PathVariable String deptId){
        return deptService.getDepartmentById(deptId)
        .map(dept -> {
         List<Faculty> faculties = facultyService.getAllByDeptId(deptId)
         .stream()
         .collect(Collectors.toList());
-        return new ResponseEntity<>(faculties,HttpStatus.OK);
+        return new ResponseEntity<>(faculties.stream().map(faculty -> FacultyDto.fromEntity(faculty)).toList(),HttpStatus.OK);
        })
        .orElseGet(() -> {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -101,13 +101,13 @@ public class DepartmentController {
 
 
     @GetMapping("/getAllHod")
-    public ResponseEntity<List<Faculty>> getAllHOD(){
+    public ResponseEntity<?> getAllHOD(){
         List<Faculty> faculties = facultyService.getAllFaculties()
         .stream()
         .filter(f -> f.getRoles().contains("HOD"))
         .collect(Collectors.toList());
         if(!faculties.isEmpty()){
-            return new ResponseEntity<>(faculties,HttpStatus.OK);
+            return new ResponseEntity<>(faculties.stream().map(faculty -> FacultyDto.fromEntity(faculty)).toList(),HttpStatus.OK);
         }else{
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -131,13 +131,13 @@ public class DepartmentController {
 
 
      @GetMapping("/allstudents/{deptId}")
-    public ResponseEntity<List<Student>> getAllStudentsOfDept(@PathVariable String deptId){
+    public ResponseEntity<?> getAllStudentsOfDept(@PathVariable String deptId){
         return deptService.getDepartmentById(deptId)
         .map(dept -> {
             List<Student> students = studentService.getAllStudentsOfDepartment(deptId)
             .stream()
             .collect(Collectors.toList());
-            return new ResponseEntity<>(students,HttpStatus.OK);
+            return new ResponseEntity<>(students.stream().map(student -> StudentDto.fromEntity(student)).toList(),HttpStatus.OK);
         })
         .orElseGet(() -> {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

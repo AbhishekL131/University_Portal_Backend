@@ -19,6 +19,7 @@ import com.example.College_Management_Portal.Models.Course;
 
 import com.example.College_Management_Portal.Models.Faculty;
 import com.example.College_Management_Portal.Models.Student;
+import com.example.College_Management_Portal.Models.StudentDto;
 import com.example.College_Management_Portal.Service.CourseService;
 
 import com.example.College_Management_Portal.Service.FacultyCourseService;
@@ -60,6 +61,7 @@ public class FacultyController {
         String facultyId = facultyService.getFacultyByUserName(auth.getName()).map(x -> x.getFacultyId()).orElse(null);
         Optional<Faculty> faculty = facultyService.getFacultyById(facultyId);
         if(faculty != null){
+            
             return new ResponseEntity<>(faculty.get(),HttpStatus.OK);
         }else{
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -89,7 +91,7 @@ public class FacultyController {
 
 
     @GetMapping("/allStudents")
-    public ResponseEntity<List<Student>> getAllStudentsOfFaculty(){
+    public ResponseEntity<?> getAllStudentsOfFaculty(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String facultyId = facultyService.getFacultyByUserName(auth.getName()).map(x -> x.getFacultyId()).orElse(null);
         return facultyService.getFacultyById(facultyId)
@@ -105,7 +107,7 @@ public class FacultyController {
             .map(x -> x.get())
             .collect(Collectors.toList());
 
-            return new ResponseEntity<>(students,HttpStatus.OK);
+            return new ResponseEntity<>(students.stream().map(student -> StudentDto.fromEntity(student)).toList(),HttpStatus.OK);
         })
         .orElseGet(() -> {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

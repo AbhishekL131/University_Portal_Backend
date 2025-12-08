@@ -2,8 +2,10 @@ package com.example.College_Management_Portal.Controller;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import java.util.stream.Collectors;
+import com.example.College_Management_Portal.Models.Student;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.example.College_Management_Portal.Models.Course;
 import com.example.College_Management_Portal.Models.Faculty;
-
+import com.example.College_Management_Portal.Models.FacultyDto;
 import com.example.College_Management_Portal.Service.CourseService;
 import com.example.College_Management_Portal.Service.FacultyCourseService;
 import com.example.College_Management_Portal.Service.FacultyService;
@@ -46,7 +48,19 @@ public class StudentController {
 
     @Autowired
     private FacultyCourseService facultyCourseService;
-    
+
+
+    @GetMapping
+    public ResponseEntity<?> getStudent(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Optional<Student> student = studentService.getStudentByUserName(auth.getName());
+
+        if(student.isPresent()){
+            return new ResponseEntity<>(student.get(),HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @GetMapping("/allcourses")
     public ResponseEntity<List<Course>> getAllCoursesOfStudent(){
@@ -68,7 +82,7 @@ public class StudentController {
     }
 
     @GetMapping("/allfaculties")
-    public ResponseEntity<List<Faculty>> getAllFacultiesOfStudent(){
+    public ResponseEntity<?> getAllFacultiesOfStudent(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String studentId = studentService.getStudentByUserName(auth.getName()).map(x -> x.getStudentId()).orElse(null);
         return studentService.getStudentById(studentId)
@@ -84,7 +98,7 @@ public class StudentController {
             .map(faculty -> faculty.get())
             .collect(Collectors.toList());
 
-            return new ResponseEntity<>(faculties,HttpStatus.OK);
+            return new ResponseEntity<>(faculties.stream().map(faculty -> FacultyDto.fromEntity(faculty)).toList(),HttpStatus.OK);
         })
         .orElseGet(() -> {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
