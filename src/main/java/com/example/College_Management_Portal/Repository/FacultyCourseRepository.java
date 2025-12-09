@@ -12,4 +12,5 @@ import com.example.College_Management_Portal.Models.*;
 public interface FacultyCourseRepository extends MongoRepository<FacultyCourse,ObjectId>{
   List<FacultyCourse> findFacultyByCourseId(String courseId);
   List<FacultyCourse> findCourseByFacultyId(String facultyId);
+  Boolean existsByFacultyIdAndCourseId(String facultyId,String courseId);
 }

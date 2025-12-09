@@ -26,4 +26,7 @@ public class FacultyCourseService {
         return facultyCourseRepo.findFacultyByCourseId(courseId);
     }
     
+    public Boolean ExistsByFacultyAndCourseId(String facultyId,String courseId){
+        return facultyCourseRepo.existsByFacultyIdAndCourseId(facultyId,courseId);
+    }
 }

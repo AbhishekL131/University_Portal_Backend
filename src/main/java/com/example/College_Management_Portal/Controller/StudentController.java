@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import java.util.stream.Collectors;
 import com.example.College_Management_Portal.Models.Student;
+import com.example.College_Management_Portal.Models.StudentCourse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,11 +14,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.College_Management_Portal.Models.Attendance;
+import com.example.College_Management_Portal.Models.AttendanceDisplay;
 import com.example.College_Management_Portal.Models.Course;
 import com.example.College_Management_Portal.Models.Faculty;
 import com.example.College_Management_Portal.Models.FacultyDto;
+import com.example.College_Management_Portal.Service.AttendanceService;
 import com.example.College_Management_Portal.Service.CourseService;
 import com.example.College_Management_Portal.Service.FacultyCourseService;
 import com.example.College_Management_Portal.Service.FacultyService;
@@ -48,6 +54,10 @@ public class StudentController {
 
     @Autowired
     private FacultyCourseService facultyCourseService;
+
+    @Autowired
+    private AttendanceService attendanceService;
+
 
 
     @GetMapping
@@ -103,5 +113,36 @@ public class StudentController {
         .orElseGet(() -> {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         });
+    }
+
+    @GetMapping("/getAttendance/{courseId}")
+    public ResponseEntity<?> getAttendanceForCourse(@PathVariable String courseId){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
+        List<Attendance> attd = studentCourseService.getStudentAttendance(studentId,courseId);
+        if(attd != null){
+            return new ResponseEntity<>(attd.stream().map(x -> AttendanceDisplay.fromEntity(x)).toList(),HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/getAttendancePercent/{courseId}")
+    public ResponseEntity<?> getAttendancePercentForCourse(@PathVariable String courseId){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
+        Optional<StudentCourse> studentCourse = studentCourseService.getStudentCourse(studentId,courseId);
+
+        if(studentCourse.isPresent()){
+            List<Attendance> attendance = attendanceService.getByStudentCourseId(studentCourse.get().getId());
+            long totalClasses = attendance.stream().count();
+            long attendedClasses = attendance.stream().filter(x -> x.getPresent().equals(true)).count();
+
+            float attendancePercent = ((float)attendedClasses/totalClasses)*100;
+
+            return new ResponseEntity<>(attendancePercent,HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(0,HttpStatus.BAD_REQUEST);
     }
 }

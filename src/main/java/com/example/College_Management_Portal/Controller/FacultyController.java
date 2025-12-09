@@ -12,14 +12,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.College_Management_Portal.Models.AttendanceDto;
 import com.example.College_Management_Portal.Models.Course;
 
 import com.example.College_Management_Portal.Models.Faculty;
 import com.example.College_Management_Portal.Models.Student;
 import com.example.College_Management_Portal.Models.StudentDto;
+import com.example.College_Management_Portal.Service.AttendanceService;
 import com.example.College_Management_Portal.Service.CourseService;
 
 import com.example.College_Management_Portal.Service.FacultyCourseService;
@@ -53,6 +57,9 @@ public class FacultyController {
 
     @Autowired
     private StudentService studentService;
+
+    @Autowired
+    private AttendanceService attendanceService;
 
 
     @GetMapping
@@ -112,5 +119,20 @@ public class FacultyController {
         .orElseGet(() -> {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         });
+    }
+
+
+    @PostMapping("/saveAttendance")
+    public ResponseEntity<?> saveStudentAttendance(@RequestBody AttendanceDto attDto){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String facultyId = facultyService.getFacultyByUserName(auth.getName()).map(faculty -> faculty.getFacultyId()).orElse(null);
+        String courseId = attDto.getCourseId();
+        String studentId = attDto.getStudentId();
+        if(facultyCourseService.ExistsByFacultyAndCourseId(facultyId,courseId) && studentCourseService.ExistsByStudentAndCourseId(studentId,courseId)){
+            attendanceService.saveAttendance(attDto);
+            return new ResponseEntity<>(attDto,HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.College_Management_Portal.Repository;
 import java.util.List;
+import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -14,4 +15,5 @@ public interface StudentCourseRepository extends MongoRepository<StudentCourse,O
     List<StudentCourse> findStudentByCourseId(String courseId);
     boolean existsByStudentIdAndCourseId(String studentId,String courseId);
     void deleteByStudentId(String studentId);
+    Optional<StudentCourse> findByStudentIdAndCourseId(String studentId,String courseId);
 }
