@@ -102,20 +102,11 @@ public class LoginController {
     public ResponseEntity<?> login(@RequestBody Student student){
         try{
 
-            log.info("we entered try block ");
-
-            log.info("username : "+student.getUserName());
-            log.info("password : "+student.getPassword());
-
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(student.getUserName(),student.getPassword())
             );
 
-            log.info("here before fetching userDetails ");
             UserDetails userDetails = userDetailsService.loadUserByUsername(student.getUserName());
-
-
-            log.info("we fetched user details "+userDetails);
 
 
             boolean hasStudentRole = userDetails.getAuthorities().stream()
