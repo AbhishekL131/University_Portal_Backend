@@ -59,7 +59,6 @@ public class StudentController {
     private AttendanceService attendanceService;
 
 
-
     @GetMapping
     public ResponseEntity<?> getStudent(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

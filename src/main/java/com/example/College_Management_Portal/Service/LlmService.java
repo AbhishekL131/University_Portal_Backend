@@ -19,5 +19,7 @@ public class LlmService {
     public String generateText(String prompt){
         return model.generate(prompt);
     } 
-        
+
+    
+         
 }
