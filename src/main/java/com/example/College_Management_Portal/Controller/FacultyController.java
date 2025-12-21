@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.College_Management_Portal.DTOs.MessageRequestDto;
 import com.example.College_Management_Portal.Models.AttendanceDto;
 import com.example.College_Management_Portal.Models.Course;
 import com.example.College_Management_Portal.Models.ExamScoreCardDto;
@@ -28,6 +29,7 @@ import com.example.College_Management_Portal.Service.CourseService;
 import com.example.College_Management_Portal.Service.ExamScoreCardService;
 import com.example.College_Management_Portal.Service.FacultyCourseService;
 import com.example.College_Management_Portal.Service.FacultyService;
+import com.example.College_Management_Portal.Service.MessageService;
 import com.example.College_Management_Portal.Service.StudentCourseService;
 import com.example.College_Management_Portal.Service.StudentService;
 
@@ -63,6 +65,9 @@ public class FacultyController {
 
     @Autowired
     private ExamScoreCardService examScoreCardService;
+
+    @Autowired
+    private MessageService messageService;
 
 
     @GetMapping
@@ -151,5 +156,15 @@ public class FacultyController {
         }else{
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/sendMessage")
+    public ResponseEntity<?> sendMessage(@RequestBody MessageRequestDto dto){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String facultyId = facultyService.getFacultyByUserName(auth.getName()).map(faculty -> faculty.getFacultyId()).orElse(null);
+
+        messageService.sendMessage(facultyId,dto);
+
+        return  ResponseEntity.ok("message sent .. ");
     }
 }

@@ -1,6 +1,5 @@
 package com.example.College_Management_Portal.Controller;
 
-
 import java.util.List;
 import java.util.Optional;
 
@@ -18,17 +17,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.College_Management_Portal.DTOs.MessageResponseDto;
 import com.example.College_Management_Portal.Models.Attendance;
 import com.example.College_Management_Portal.Models.AttendanceDisplay;
 import com.example.College_Management_Portal.Models.Course;
 import com.example.College_Management_Portal.Models.ExamScoreCardDto;
 import com.example.College_Management_Portal.Models.Faculty;
 import com.example.College_Management_Portal.Models.FacultyDto;
+import com.example.College_Management_Portal.Models.Message;
 import com.example.College_Management_Portal.Service.AttendanceService;
 import com.example.College_Management_Portal.Service.CourseService;
 import com.example.College_Management_Portal.Service.ExamScoreCardService;
 import com.example.College_Management_Portal.Service.FacultyCourseService;
 import com.example.College_Management_Portal.Service.FacultyService;
+import com.example.College_Management_Portal.Service.MessageService;
 import com.example.College_Management_Portal.Service.StudentCourseService;
 import com.example.College_Management_Portal.Service.StudentService;
 
@@ -62,6 +64,9 @@ public class StudentController {
 
     @Autowired
     private ExamScoreCardService examScoreCardService;
+
+    @Autowired
+    private MessageService messageService;
 
 
     @GetMapping
@@ -178,5 +183,26 @@ public class StudentController {
         }else{
             return new ResponseEntity<>(examScoreCards,HttpStatus.OK);
         }
+    }
+
+    @GetMapping("/getAllMessages")
+    public ResponseEntity<?> getAllMessagesOfStudent(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
+        List<Message> messages = messageService.getAllMessagesOfReceiver(studentId);
+
+        List<MessageResponseDto> response = messages
+        .stream()
+        .map(m -> 
+            MessageResponseDto.builder()
+            .title(m.getTitle())
+            .content(m.getContent())
+            .senderId(m.getSenderId())
+            .createdAt(m.getCreatedAt())
+            .build()
+        )
+        .toList();
+        
+        return ResponseEntity.ok(response);
     }
 }

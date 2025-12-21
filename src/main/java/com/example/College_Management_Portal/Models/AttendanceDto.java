@@ -1,5 +1,4 @@
 package com.example.College_Management_Portal.Models;
-
 import java.time.LocalDate;
 
 import lombok.Builder;
@@ -24,3 +23,4 @@ public class AttendanceDto {
         .build();
     }
 }
+
