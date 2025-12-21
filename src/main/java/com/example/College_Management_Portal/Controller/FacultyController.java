@@ -19,13 +19,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.College_Management_Portal.Models.AttendanceDto;
 import com.example.College_Management_Portal.Models.Course;
-
+import com.example.College_Management_Portal.Models.ExamScoreCardDto;
 import com.example.College_Management_Portal.Models.Faculty;
 import com.example.College_Management_Portal.Models.Student;
 import com.example.College_Management_Portal.Models.StudentDto;
 import com.example.College_Management_Portal.Service.AttendanceService;
 import com.example.College_Management_Portal.Service.CourseService;
-
+import com.example.College_Management_Portal.Service.ExamScoreCardService;
 import com.example.College_Management_Portal.Service.FacultyCourseService;
 import com.example.College_Management_Portal.Service.FacultyService;
 import com.example.College_Management_Portal.Service.StudentCourseService;
@@ -60,6 +60,9 @@ public class FacultyController {
 
     @Autowired
     private AttendanceService attendanceService;
+
+    @Autowired
+    private ExamScoreCardService examScoreCardService;
 
 
     @GetMapping
@@ -131,6 +134,20 @@ public class FacultyController {
         if(facultyCourseService.ExistsByFacultyAndCourseId(facultyId,courseId) && studentCourseService.ExistsByStudentAndCourseId(studentId,courseId)){
             attendanceService.saveAttendance(attDto);
             return new ResponseEntity<>(attDto,HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/saveExamScoreCard")
+    public ResponseEntity<?> saveStudentExamScoreCard(@RequestBody ExamScoreCardDto examScoreCardDto){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String facultyId  = facultyService.getFacultyByUserName(auth.getName()).map(faculty -> faculty.getFacultyId()).orElse(null);
+        String courseId = examScoreCardDto.getCourseId();
+        String studentId = examScoreCardDto.getStudentId();
+        if(facultyCourseService.ExistsByFacultyAndCourseId(facultyId,courseId) && studentCourseService.ExistsByStudentAndCourseId(studentId,courseId)){
+            examScoreCardService.createExamScoreCardForStudent(examScoreCardDto);
+            return new ResponseEntity<>(examScoreCardDto,HttpStatus.OK);
         }else{
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

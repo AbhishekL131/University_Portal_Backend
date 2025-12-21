@@ -21,10 +21,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.College_Management_Portal.Models.Attendance;
 import com.example.College_Management_Portal.Models.AttendanceDisplay;
 import com.example.College_Management_Portal.Models.Course;
+import com.example.College_Management_Portal.Models.ExamScoreCardDto;
 import com.example.College_Management_Portal.Models.Faculty;
 import com.example.College_Management_Portal.Models.FacultyDto;
 import com.example.College_Management_Portal.Service.AttendanceService;
 import com.example.College_Management_Portal.Service.CourseService;
+import com.example.College_Management_Portal.Service.ExamScoreCardService;
 import com.example.College_Management_Portal.Service.FacultyCourseService;
 import com.example.College_Management_Portal.Service.FacultyService;
 import com.example.College_Management_Portal.Service.StudentCourseService;
@@ -57,6 +59,9 @@ public class StudentController {
 
     @Autowired
     private AttendanceService attendanceService;
+
+    @Autowired
+    private ExamScoreCardService examScoreCardService;
 
 
     @GetMapping
@@ -143,5 +148,35 @@ public class StudentController {
         }
 
         return new ResponseEntity<>(0,HttpStatus.BAD_REQUEST);
+    }
+
+
+    @GetMapping("/getScoreCard/{courseId}")
+    public ResponseEntity<?> getExamScoreCardForCourse(@PathVariable String courseId){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
+        ExamScoreCardDto examScoreCard = examScoreCardService.getStudentExamScoreCard(studentId,courseId);
+        Optional<StudentCourse> studentCourse = studentCourseService.getStudentCourse(studentId,courseId);
+        if(studentCourse.isPresent()){
+            return new ResponseEntity<>(examScoreCard,HttpStatus.OK);
+        }else{
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/getAllScoreCards")
+    public ResponseEntity<?> getAllExamScoreCardsOfStudent(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
+        List<StudentCourse> studentCourse = studentCourseService.getAllCoursesOfStudent(studentId);
+        List<ExamScoreCardDto> examScoreCards = studentCourse.stream()
+        .map(sc -> examScoreCardService.getStudentExamScoreCard(studentId,sc.getCourseId()))
+        .toList();
+
+        if(examScoreCards.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }else{
+            return new ResponseEntity<>(examScoreCards,HttpStatus.OK);
+        }
     }
 }

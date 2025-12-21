@@ -20,6 +20,7 @@ public class StudentCourseService {
     @Autowired
     private AttendanceRepository attendanceRepo;
 
+
     public void EnrollNewStudentInCourse(StudentCourse studentCourse){
         studentCourseRepo.save(studentCourse);
     }
@@ -50,6 +51,7 @@ public class StudentCourseService {
 
         return attendanceList;
    }
+
 
    public Optional<StudentCourse> getStudentCourse(String studentId,String courseId){
         return studentCourseRepo.findByStudentIdAndCourseId(studentId,courseId);
