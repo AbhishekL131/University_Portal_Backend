@@ -5,9 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 class CollegeManagementPortalApplicationTests {
-
 	@Test
 	void contextLoads() {
 	}
-
 }
