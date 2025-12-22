@@ -185,6 +185,30 @@ public class StudentController {
         }
     }
 
+
+    //// new feature to be rolled out
+
+    @GetMapping("/getPercentage")
+    public ResponseEntity<?> getPercentageMarksOfStudent(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
+        List<StudentCourse> studentCourse = studentCourseService.getAllCoursesOfStudent(studentId);
+        long totalMarks = studentCourse.stream()
+        .map(sc -> examScoreCardService.getStudentExamScoreCard(studentId,sc.getCourseId()))
+        .mapToInt(examSC -> examSC.getMaxMarks())
+        .sum();
+
+        long obtainedMarks = studentCourse
+        .stream()
+        .map(sc -> examScoreCardService.getStudentExamScoreCard(studentId,sc.getCourseId()))
+        .mapToInt(examSc -> examSc.getObtainedMarks())
+        .sum();
+
+        float percent = ((float) obtainedMarks/totalMarks)*100;
+
+        return ResponseEntity.ok(percent);
+    }
+
     @GetMapping("/AllMessages")
     public ResponseEntity<List<MessageResponseDto>> getAllMessagesOfStudent(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
