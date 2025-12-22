@@ -185,8 +185,8 @@ public class StudentController {
         }
     }
 
-    @GetMapping("/getAllMessages")
-    public ResponseEntity<?> getAllMessagesOfStudent(){
+    @GetMapping("/AllMessages")
+    public ResponseEntity<List<MessageResponseDto>> getAllMessagesOfStudent(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
         List<Message> messages = messageService.getAllMessagesOfReceiver(studentId);
