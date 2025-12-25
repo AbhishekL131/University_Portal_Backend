@@ -167,4 +167,5 @@ public class FacultyController {
 
         return  ResponseEntity.ok("message sent .. ");
     }
+
 }

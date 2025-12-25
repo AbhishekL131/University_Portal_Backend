@@ -34,12 +34,31 @@ public class MessageService {
         messageRepo.save(message);
     }
 
+    public void sendMessageFromDepartment(String deptId,MessageRequestDto dto){
+
+        dto.setType(MessageType.ANNOUNCEMENT);
+        Message message = Message.builder()
+        .senderId(deptId)
+        .senderRole("DEPARTMENT")
+        .receiverId(null)
+        .receiverRole("FACULTY")
+        .title(dto.getTitle())
+        .content(dto.getContent())
+        .type(dto.getType())
+        .createdAt(LocalDateTime.now())
+        .build();
+
+        messageRepo.save(message);
+    }
+
     public List<Message> getAllMessagesOfReceiver(String receiverId){
         List<Message> messages = new ArrayList<>();
         messages.addAll(messageRepo.findByReceiverId(receiverId));
         messages.addAll(messageRepo.findByType(MessageType.ANNOUNCEMENT));
         return messages;
     }
+
+    
 
     
 }

@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,10 +18,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.College_Management_Portal.Config.RateLimit;
+import com.example.College_Management_Portal.DTOs.MessageRequestDto;
 import com.example.College_Management_Portal.Models.*;
 import com.example.College_Management_Portal.Service.CourseService;
 import com.example.College_Management_Portal.Service.DepartmentService;
 import com.example.College_Management_Portal.Service.FacultyService;
+import com.example.College_Management_Portal.Service.MessageService;
 import com.example.College_Management_Portal.Service.StudentCourseService;
 import com.example.College_Management_Portal.Service.StudentService;
 
@@ -46,6 +50,9 @@ public class DepartmentController {
 
     @Autowired
     private StudentCourseService studentCourseService;
+
+    @Autowired
+    private MessageService messageService;
 
 
     @PostMapping("/create")
@@ -175,5 +182,24 @@ public class DepartmentController {
             log.info("department "+deptId+" doesn't exist");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         });
+    }
+
+
+    @PostMapping("/sendMessageToAllFaculties")
+    public ResponseEntity<?> sendMessageToFaculties(@RequestBody MessageRequestDto dto){
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String facultyId = facultyService.getFacultyByUserName(auth.getName()).map(faculty -> faculty.getFacultyId()).orElse(null);
+        Optional<Faculty> faculty = facultyService.getFacultyById(facultyId);
+
+        if(!faculty.isPresent()){
+            return new ResponseEntity<>("Bad request",HttpStatus.BAD_REQUEST);
+        }
+
+        if(faculty.get().getRoles().contains("HOD")){
+                messageService.sendMessageFromDepartment(faculty.get().getDeptId(),dto);
+        }
+
+         return ResponseEntity.ok("message sent successfully");
     }
 }
