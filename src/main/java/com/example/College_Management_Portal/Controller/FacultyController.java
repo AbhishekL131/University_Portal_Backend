@@ -76,7 +76,7 @@ public class FacultyController {
         String facultyId = facultyService.getFacultyByUserName(auth.getName()).map(x -> x.getFacultyId()).orElse(null);
         Optional<Faculty> faculty = facultyService.getFacultyById(facultyId);
         if(faculty != null){
-            
+             
             return new ResponseEntity<>(faculty.get(),HttpStatus.OK);
         }else{
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
