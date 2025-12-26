@@ -42,7 +42,7 @@ public class MessageService {
         Message message = Message.builder()
         .senderId(deptId)
         .senderRole("DEPARTMENT")
-        .receiverId(null)
+        .receiverId("ALL")
         .receiverRole("FACULTY")
         .title(dto.getTitle())
         .content(dto.getContent())
@@ -65,7 +65,7 @@ public class MessageService {
         messages.addAll(messageRepo.findByReceiverId(facultyId));
         messages.addAll(messageRepo.findByType(MessageType.ANNOUNCEMENT));
         List<Message> msgs = messages.stream()
-        .filter(message -> (message.getReceiverRole().equals("FACULTY") | message.getReceiverId().equals(facultyId)))
+        .filter(message -> (message.getReceiverRole().equals("FACULTY") | message.getReceiverId().equals("ALL")))
         .toList();
         return msgs;
     }
