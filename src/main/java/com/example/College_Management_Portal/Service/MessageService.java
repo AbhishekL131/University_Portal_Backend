@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.College_Management_Portal.DTOs.MessageRequestDto;
 import com.example.College_Management_Portal.Models.Message;
+
 import com.example.College_Management_Portal.Repository.MessageRepository;
 import com.example.College_Management_Portal.Utils.MessageType;
 
@@ -17,6 +18,7 @@ public class MessageService {
     
     @Autowired
     private MessageRepository messageRepo;
+
 
     public void sendMessage(String facultyId,MessageRequestDto dto){
         
@@ -56,6 +58,16 @@ public class MessageService {
         messages.addAll(messageRepo.findByReceiverId(receiverId));
         messages.addAll(messageRepo.findByType(MessageType.ANNOUNCEMENT));
         return messages;
+    }
+
+    public List<Message> getAllMessagesOfFaculty(String facultyId){
+        List<Message> messages = new ArrayList<>();
+        messages.addAll(messageRepo.findByReceiverId(facultyId));
+        messages.addAll(messageRepo.findByType(MessageType.ANNOUNCEMENT));
+        List<Message> msgs = messages.stream()
+        .filter(message -> (message.getReceiverRole().equals("FACULTY") | message.getReceiverId().equals(facultyId)))
+        .toList();
+        return msgs;
     }
 
     
