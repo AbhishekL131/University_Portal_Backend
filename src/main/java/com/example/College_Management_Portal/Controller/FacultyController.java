@@ -22,6 +22,7 @@ import com.example.College_Management_Portal.Models.AttendanceDto;
 import com.example.College_Management_Portal.Models.Course;
 import com.example.College_Management_Portal.Models.ExamScoreCardDto;
 import com.example.College_Management_Portal.Models.Faculty;
+import com.example.College_Management_Portal.Models.Message;
 import com.example.College_Management_Portal.Models.Student;
 import com.example.College_Management_Portal.Models.StudentDto;
 import com.example.College_Management_Portal.Service.AttendanceService;
@@ -166,6 +167,18 @@ public class FacultyController {
         messageService.sendMessage(facultyId,dto);
 
         return  ResponseEntity.ok("message sent .. ");
+    }
+
+    @GetMapping("/getAllMessages")
+    public ResponseEntity<?> getAllMessages(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String facultyId = facultyService.getFacultyByUserName(auth.getName()).map(faculty -> faculty.getFacultyId()).orElse(null);
+        List<Message> messages = messageService.getAllMessagesOfFaculty(facultyId);
+        if(messages.isEmpty()){
+            return ResponseEntity.ok("no messages to display ");
+        }else{
+            return new ResponseEntity<>(messages,HttpStatus.OK);
+        }
     }
 
 }
