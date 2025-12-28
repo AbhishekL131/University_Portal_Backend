@@ -65,7 +65,7 @@ public class MessageService {
         messages.addAll(messageRepo.findByReceiverId(facultyId));
         messages.addAll(messageRepo.findByType(MessageType.ANNOUNCEMENT));
         List<Message> msgs = messages.stream()
-        .filter(message -> (message.getReceiverRole().equals("FACULTY") | message.getReceiverId().equals("ALL")))
+        .filter(message -> (message.getReceiverRole().equals("ALL")))
         .toList();
         return msgs;
     }
