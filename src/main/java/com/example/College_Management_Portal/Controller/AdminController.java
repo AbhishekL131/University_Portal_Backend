@@ -49,7 +49,6 @@ public class AdminController {
 
 
 
-
     @PostMapping("/createFaculty")
     @Operation(summary = "create a new faculty")
     public ResponseEntity<Faculty> createFaculty(@RequestBody Faculty faculty){
