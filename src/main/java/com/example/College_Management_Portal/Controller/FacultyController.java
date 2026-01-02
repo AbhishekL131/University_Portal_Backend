@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.College_Management_Portal.DTOs.MessageRequestDto;
+import com.example.College_Management_Portal.DTOs.MessageResponseDto;
 import com.example.College_Management_Portal.Models.AttendanceDto;
 import com.example.College_Management_Portal.Models.Course;
 import com.example.College_Management_Portal.Models.ExamScoreCardDto;
@@ -174,11 +175,19 @@ public class FacultyController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String facultyId = facultyService.getFacultyByUserName(auth.getName()).map(faculty -> faculty.getFacultyId()).orElse(null);
         List<Message> messages = messageService.getAllMessagesOfFaculty(facultyId);
-        if(messages.isEmpty()){
-            return ResponseEntity.ok("no messages to display ");
-        }else{
-            return new ResponseEntity<>(messages,HttpStatus.OK);
-        }
+        List<MessageResponseDto> allMessages = messages
+        .stream()
+        .map(m -> 
+            MessageResponseDto.builder()
+            .title(m.getTitle())
+            .content(m.getContent())
+            .senderId(m.getSenderId())
+            .createdAt(m.getCreatedAt())
+            .build()
+        )
+        .toList();
+
+        return ResponseEntity.ok(allMessages);
     }
 
 }
