@@ -37,6 +37,7 @@ public class ExamScoreCardService {
             log.info("failed to save the score card");
         }
     }
+    
 
     public ExamScoreCardDto getStudentExamScoreCard(String studentId,String courseId){
     Optional<StudentCourse> studentCourse = studentCourseRepo.findByStudentIdAndCourseId(studentId,courseId);

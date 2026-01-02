@@ -152,6 +152,11 @@ public class FacultyController {
         String facultyId  = facultyService.getFacultyByUserName(auth.getName()).map(faculty -> faculty.getFacultyId()).orElse(null);
         String courseId = examScoreCardDto.getCourseId();
         String studentId = examScoreCardDto.getStudentId();
+        ExamScoreCardDto examScoreCard = examScoreCardService.getStudentExamScoreCard(studentId,courseId);
+        if(examScoreCard != null){
+            log.info("exam score already exists");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         if(facultyCourseService.ExistsByFacultyAndCourseId(facultyId,courseId) && studentCourseService.ExistsByStudentAndCourseId(studentId,courseId)){
             examScoreCardService.createExamScoreCardForStudent(examScoreCardDto);
             return new ResponseEntity<>(examScoreCardDto,HttpStatus.OK);
@@ -167,7 +172,7 @@ public class FacultyController {
 
         messageService.sendMessage(facultyId,dto);
 
-        return  ResponseEntity.ok("message sent .. ");
+        return ResponseEntity.ok("message sent .. ");
     }
 
     @GetMapping("/getAllMessages")
