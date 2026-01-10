@@ -3,6 +3,7 @@ package com.example.College_Management_Portal.Service;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.example.College_Management_Portal.Models.ExamScoreCard;
@@ -39,6 +40,7 @@ public class ExamScoreCardService {
     }
     
 
+    @Cacheable(value="ScoreCards")
     public ExamScoreCardDto getStudentExamScoreCard(String studentId,String courseId){
     Optional<StudentCourse> studentCourse = studentCourseRepo.findByStudentIdAndCourseId(studentId,courseId);
     if(studentCourse.isEmpty()){

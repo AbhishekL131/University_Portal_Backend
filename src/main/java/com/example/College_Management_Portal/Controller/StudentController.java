@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import com.example.College_Management_Portal.Models.Student;
 import com.example.College_Management_Portal.Models.StudentCourse;
+import com.example.College_Management_Portal.Models.FacultyCourse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -100,24 +101,35 @@ public class StudentController {
        });
     }
 
+
+
     @GetMapping("/allfaculties")
     public ResponseEntity<?> getAllFacultiesOfStudent(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String studentId = studentService.getStudentByUserName(auth.getName()).map(x -> x.getStudentId()).orElse(null);
         return studentService.getStudentById(studentId)
         .map(student -> {
-            List<Faculty> faculties = studentCourseService.getAllCoursesOfStudent(studentId)
-            .stream()
-            .map(studentCourse -> courseService.getCourseById(studentCourse.getCourseId()))
-            .filter(course -> course.isPresent())
-            .map(course -> course.get())
-            .flatMap(course -> facultyCourseService.getAllFacultiesOfCourse(course.getCourseId()).stream())
-            .map(facultyCourse -> facultyService.getFacultyById(facultyCourse.getFacultyId()))
-            .filter(faculty -> faculty.isPresent())
-            .map(faculty -> faculty.get())
-            .collect(Collectors.toList());
+            List<StudentCourse> studentCourses = studentCourseService.getAllCoursesOfStudent(studentId);
+            
+            if (studentCourses.isEmpty()) {
+                return new ResponseEntity<>(java.util.Collections.emptyList(), HttpStatus.OK);
+            }
 
-            return new ResponseEntity<>(faculties.stream().map(faculty -> FacultyDto.fromEntity(faculty)).toList(),HttpStatus.OK);
+            List<String> courseIds = studentCourses.stream()
+                .map(StudentCourse::getCourseId)
+                .distinct()
+                .collect(Collectors.toList());
+
+            List<FacultyCourse> facultyCourses = facultyCourseService.getFacultiesForCourses(courseIds);
+
+            List<String> facultyIds = facultyCourses.stream()
+                .map(FacultyCourse::getFacultyId)
+                .distinct()
+                .collect(Collectors.toList());
+
+            List<Faculty> faculties = facultyService.getFacultiesByIds(facultyIds);
+
+            return new ResponseEntity<>(faculties.stream().map(FacultyDto::fromEntity).toList(), HttpStatus.OK);
         })
         .orElseGet(() -> {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

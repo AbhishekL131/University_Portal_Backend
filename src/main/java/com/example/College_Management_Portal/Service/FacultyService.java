@@ -50,6 +50,10 @@ public class FacultyService {
     public List<Faculty> getAllFaculties(){
         return facultyRepo.findAll();
     }
+
+    public List<Faculty> getFacultiesByIds(List<String> ids){
+        return facultyRepo.findAllById(ids);
+    }
     
     public Optional<Faculty> getFacultyById(String facultyId){
         return facultyRepo.findById(facultyId);

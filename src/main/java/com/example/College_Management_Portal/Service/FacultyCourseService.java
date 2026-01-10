@@ -25,6 +25,10 @@ public class FacultyCourseService {
     public List<FacultyCourse> getAllFacultiesOfCourse(String courseId){
         return facultyCourseRepo.findFacultyByCourseId(courseId);
     }
+
+    public List<FacultyCourse> getFacultiesForCourses(List<String> courseIds){
+        return facultyCourseRepo.findByCourseIdIn(courseIds);
+    }
     
     public Boolean ExistsByFacultyAndCourseId(String facultyId,String courseId){
         return facultyCourseRepo.existsByFacultyIdAndCourseId(facultyId,courseId);
