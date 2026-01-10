@@ -23,8 +23,10 @@ import com.example.College_Management_Portal.Models.AttendanceDto;
 import com.example.College_Management_Portal.Models.Course;
 import com.example.College_Management_Portal.Models.ExamScoreCardDto;
 import com.example.College_Management_Portal.Models.Faculty;
+import com.example.College_Management_Portal.Models.FacultyCourse;
 import com.example.College_Management_Portal.Models.Message;
 import com.example.College_Management_Portal.Models.Student;
+import com.example.College_Management_Portal.Models.StudentCourse;
 import com.example.College_Management_Portal.Models.StudentDto;
 import com.example.College_Management_Portal.Service.AttendanceService;
 import com.example.College_Management_Portal.Service.CourseService;
@@ -113,16 +115,27 @@ public class FacultyController {
         String facultyId = facultyService.getFacultyByUserName(auth.getName()).map(x -> x.getFacultyId()).orElse(null);
         return facultyService.getFacultyById(facultyId)
         .map(faculty -> {
-            List<Student> students = facultyCourseService.getAllCoursesOfFaculty(facultyId)
+            List<FacultyCourse> facultyCourse = facultyCourseService.getAllCoursesOfFaculty(facultyId);
+
+            if(facultyCourse.isEmpty()){
+                return new ResponseEntity<>("no courses assigned to faculty",HttpStatus.OK);
+            }
+
+            List<String> courseIDs = facultyCourse
             .stream()
-            .map(fc -> courseService.getCourseById(fc.getCourseId()))
-            .filter(x -> x.isPresent())
-            .map(x -> x.get())
-            .flatMap(course -> studentCourseService.getAllStudentsEnrolledInCourse(course.getCourseId()).stream())
-            .map(sc -> studentService.getStudentById(sc.getStudentId()))
-            .filter(x -> x.isPresent())
-            .map(x -> x.get())
+            .map(fc -> fc.getCourseId())
+            .distinct()
             .collect(Collectors.toList());
+
+            List<StudentCourse> studentCourse = studentCourseService.getStudentsForCourses(courseIDs);
+            
+            List<String> studentIDs = studentCourse
+            .stream()
+            .map(sc -> sc.getStudentId())
+            .distinct()
+            .collect(Collectors.toList());
+
+            List<Student> students = studentService.getStudentsByIDs(studentIDs);
 
             return new ResponseEntity<>(students.stream().map(student -> StudentDto.fromEntity(student)).toList(),HttpStatus.OK);
         })

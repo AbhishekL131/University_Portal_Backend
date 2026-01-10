@@ -56,4 +56,7 @@ public class StudentService {
         return studentRepo.findStudentByUserName(username);
     }
     
+    public List<Student> getStudentsByIDs(List<String> studentIDs){
+        return studentRepo.findAllById(studentIDs);
+    }
 }

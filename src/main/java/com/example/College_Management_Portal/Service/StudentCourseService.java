@@ -57,6 +57,10 @@ public class StudentCourseService {
         return studentCourseRepo.findByStudentIdAndCourseId(studentId,courseId);
    }
 
+   public List<StudentCourse> getStudentsForCourses(List<String> courseIds){
+        return studentCourseRepo.findByCourseIdIn(courseIds);
+   }
+
    public Boolean ExistsByStudentAndCourseId(String studentId,String courseId){
     return studentCourseRepo.existsByStudentIdAndCourseId(studentId,courseId);
    }
