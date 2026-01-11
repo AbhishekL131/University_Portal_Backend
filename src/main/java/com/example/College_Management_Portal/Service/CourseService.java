@@ -43,4 +43,9 @@ public class CourseService {
     public void deleteCourseByDepartmentId(String deptId){
         courseRepo.deleteByDeptId(deptId);
     }
+
+    @Cacheable(value="courses",key="#courseIDs")
+    public List<Course> getAllCoursesWithIDs(List<String> courseIDs){
+        return courseRepo.findByCourseIdIn(courseIDs);
+    }
 }

@@ -94,12 +94,14 @@ public class FacultyController {
         String facultyId = facultyService.getFacultyByUserName(auth.getName()).map(faculty -> faculty.getFacultyId()).orElse(null);
         return facultyService.getFacultyById(facultyId)
         .map(faculty -> {
-            List<Course> courses = facultyCourseService.getAllCoursesOfFaculty(facultyId)
+            List<FacultyCourse> facultyCourse = facultyCourseService.getAllCoursesOfFaculty(facultyId);
+            List<String> courseIDs = facultyCourse
             .stream()
-            .map(x -> courseService.getCourseById(x.getCourseId()))
-            .filter(x -> x.isPresent())
-            .map(x -> x.get())
+            .map(course -> course.getCourseId())
+            .distinct()
             .collect(Collectors.toList());
+
+            List<Course> courses = courseService.getAllCoursesWithIDs(courseIDs);
 
             return new ResponseEntity<>(courses,HttpStatus.OK);
         })

@@ -17,5 +17,6 @@ public interface CourseRepository extends MongoRepository<Course,String>{
     List<Course> findCourseByDeptId(String deptId);
     List<Course> findCourseByCourseCredits(int courseCredits);
     void deleteByDeptId(String deptId);
+    List<Course> findByCourseIdIn(List<String> courseIDs);
   
 }
