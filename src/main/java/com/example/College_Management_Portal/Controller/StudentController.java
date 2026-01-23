@@ -86,19 +86,21 @@ public class StudentController {
     public ResponseEntity<List<Course>> getAllCoursesOfStudent(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String studentId = studentService.getStudentByUserName(auth.getName()).map(x -> x.getStudentId()).orElseGet(null);
-       return studentService.getStudentById(studentId)
-       .map(student -> {
-        List<Course> courses = studentCourseService.getAllCoursesOfStudent(studentId)
+
+        List<StudentCourse> courses = studentCourseService.getAllCoursesOfStudent(studentId);
+
+        List<String> courseIDs = courses
         .stream()
-        .map(x -> courseService.getCourseById(x.getCourseId()))
-        .filter(x -> x.isPresent())
-        .map(x -> x.get())
+        .map(sc -> sc.getCourseId())
+        .distinct()
         .collect(Collectors.toList());
-        return new ResponseEntity<>(courses,HttpStatus.OK);
-       })
-       .orElseGet(() -> {
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-       });
+        List<Course> StudentCourses = courseService.getAllStudentCoursesWithIDs(studentId,courseIDs);
+
+        if(StudentCourses.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(StudentCourses,HttpStatus.OK);
     }
 
 
@@ -107,33 +109,33 @@ public class StudentController {
     public ResponseEntity<?> getAllFacultiesOfStudent(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String studentId = studentService.getStudentByUserName(auth.getName()).map(x -> x.getStudentId()).orElse(null);
-        return studentService.getStudentById(studentId)
-        .map(student -> {
-            List<StudentCourse> studentCourses = studentCourseService.getAllCoursesOfStudent(studentId);
-            
-            if (studentCourses.isEmpty()) {
-                return new ResponseEntity<>(java.util.Collections.emptyList(), HttpStatus.OK);
-            }
+        List<StudentCourse> studentCourses = studentCourseService.getAllCoursesOfStudent(studentId);
+        
+        if (studentCourses.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
-            List<String> courseIds = studentCourses.stream()
-                .map(StudentCourse::getCourseId)
-                .distinct()
-                .collect(Collectors.toList());
+        List<String> courseIds = studentCourses.stream()
+            .map(StudentCourse::getCourseId)
+            .distinct()
+            .collect(Collectors.toList());
 
-            List<FacultyCourse> facultyCourses = facultyCourseService.getFacultiesForCourses(courseIds);
+        List<FacultyCourse> facultyCourses = facultyCourseService.getFacultiesForCourses(courseIds);
 
-            List<String> facultyIds = facultyCourses.stream()
-                .map(FacultyCourse::getFacultyId)
-                .distinct()
-                .collect(Collectors.toList());
+        List<String> facultyIds = facultyCourses.stream()
+            .map(FacultyCourse::getFacultyId)
+            .distinct()
+            .collect(Collectors.toList());
 
-            List<Faculty> faculties = facultyService.getFacultiesByIds(facultyIds);
+        List<Faculty> faculties = facultyService.getFacultiesByIds(facultyIds);
 
-            return new ResponseEntity<>(faculties.stream().map(FacultyDto::fromEntity).toList(), HttpStatus.OK);
-        })
-        .orElseGet(() -> {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        });
+
+        if(faculties.isEmpty()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(faculties.stream().map(FacultyDto::fromEntity).toList(), HttpStatus.OK);
+    
     }
 
     @GetMapping("/getAttendance/{courseId}")
@@ -198,7 +200,7 @@ public class StudentController {
     }
 
 
-    //// new feature to be rolled out
+    //// new feature to be rolled out here
 
     @GetMapping("/getPercentage")
     public ResponseEntity<?> getPercentageMarksOfStudent(){

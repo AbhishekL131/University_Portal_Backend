@@ -28,6 +28,7 @@ public class StudentCourseService {
         return studentCourseRepo.findStudentByCourseId(courseId);
     }
 
+    // @Cacheable(value="studentCourses",key="#studentId")
     public List<StudentCourse> getAllCoursesOfStudent(String studentId){
         return studentCourseRepo.findCourseByStudentId(studentId);
     }

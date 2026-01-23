@@ -26,6 +26,7 @@ public class FacultyCourseService {
         return facultyCourseRepo.findFacultyByCourseId(courseId);
     }
 
+   // @Cacheable(value="courseFaculties",key="#courseIds")
     public List<FacultyCourse> getFacultiesForCourses(List<String> courseIds){
         return facultyCourseRepo.findByCourseIdIn(courseIds);
     }

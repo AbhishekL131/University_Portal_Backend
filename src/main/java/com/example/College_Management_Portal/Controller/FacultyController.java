@@ -92,22 +92,20 @@ public class FacultyController {
     public ResponseEntity<List<Course>> getAllCoursesOfFaculty(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String facultyId = facultyService.getFacultyByUserName(auth.getName()).map(faculty -> faculty.getFacultyId()).orElse(null);
-        return facultyService.getFacultyById(facultyId)
-        .map(faculty -> {
-            List<FacultyCourse> facultyCourse = facultyCourseService.getAllCoursesOfFaculty(facultyId);
-            List<String> courseIDs = facultyCourse
-            .stream()
-            .map(course -> course.getCourseId())
-            .distinct()
-            .collect(Collectors.toList());
+        List<FacultyCourse> facultyCourse = facultyCourseService.getAllCoursesOfFaculty(facultyId);
+        List<String> courseIDs = facultyCourse
+        .stream()
+        .map(course -> course.getCourseId())
+        .distinct()
+        .collect(Collectors.toList());
 
-            List<Course> courses = courseService.getAllCoursesWithIDs(courseIDs);
+        List<Course> courses = courseService.getAllCoursesWithIDs(facultyId,courseIDs);
 
-            return new ResponseEntity<>(courses,HttpStatus.OK);
-        })
-        .orElseGet(() -> {
+        if(courses.isEmpty()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        });
+        }
+
+        return new ResponseEntity<>(courses,HttpStatus.OK);
     }
 
 

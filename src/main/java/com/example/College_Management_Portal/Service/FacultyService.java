@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -51,8 +52,10 @@ public class FacultyService {
         return facultyRepo.findAll();
     }
 
-    public List<Faculty> getFacultiesByIds(List<String> ids){
-        return facultyRepo.findAllById(ids);
+
+    @Cacheable(value="faculties",key="#facultyIDs")
+    public List<Faculty> getFacultiesByIds(List<String> facultyIDs){
+        return facultyRepo.findAllById(facultyIDs);
     }
     
     public Optional<Faculty> getFacultyById(String facultyId){

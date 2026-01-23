@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -52,10 +53,12 @@ public class StudentService {
         studentRepo.deleteByDepartment(deptId);
     }
 
+    @Cacheable(value="student",key="#username")
     public Optional<Student> getStudentByUserName(String username){
         return studentRepo.findStudentByUserName(username);
     }
     
+    @Cacheable(value="students",key="#studentIDs")
     public List<Student> getStudentsByIDs(List<String> studentIDs){
         return studentRepo.findAllById(studentIDs);
     }

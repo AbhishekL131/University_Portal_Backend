@@ -24,6 +24,7 @@ public class Student {
     @Indexed(unique=true)
     private String email;
     @NonNull
+    @Indexed(unique=true)
     private String userName;
     @NonNull
     private String password;
