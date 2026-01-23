@@ -1,10 +1,14 @@
 package com.example.College_Management_Portal.Models;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ExamScoreCardDto {
     
     private String studentId;

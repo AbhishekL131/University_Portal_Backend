@@ -1,11 +1,15 @@
 package com.example.College_Management_Portal.Models;
 import java.time.LocalDate;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class AttendanceDto {
     private String studentId;
     private String courseId;

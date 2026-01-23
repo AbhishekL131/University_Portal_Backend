@@ -42,6 +42,7 @@ public class StudentCourseService {
     }
 
 
+   // @Cacheable(value="studentAttendance")
    public List<Attendance> getStudentAttendance(String studentId,String courseId){
         Optional<StudentCourse> studentCourse = studentCourseRepo.findByStudentIdAndCourseId(studentId,courseId);
         if(studentCourse.isEmpty()){
