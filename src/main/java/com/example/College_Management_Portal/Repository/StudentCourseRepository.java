@@ -17,5 +17,5 @@ public interface StudentCourseRepository extends MongoRepository<StudentCourse,O
     void deleteByStudentId(String studentId);
     Optional<StudentCourse> findByStudentIdAndCourseId(String studentId,String courseId);
     List<StudentCourse> findByCourseIdIn(List<String> courseIds);
-    
+    List<StudentCourse> findByStudentIdAndCourseIdIn(String studentId,String courseId);
 }

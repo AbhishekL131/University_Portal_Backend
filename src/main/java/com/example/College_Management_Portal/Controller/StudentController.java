@@ -187,16 +187,10 @@ public class StudentController {
     public ResponseEntity<?> getAllExamScoreCardsOfStudent(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
-        List<StudentCourse> studentCourse = studentCourseService.getAllCoursesOfStudent(studentId);
-        List<ExamScoreCardDto> examScoreCards = studentCourse.stream()
-        .map(sc -> examScoreCardService.getStudentExamScoreCard(studentId,sc.getCourseId()))
-        .toList();
+        List<StudentCourse> studentCourses = studentCourseService.getAllCoursesOfStudent(studentId);
+        List<ExamScoreCardDto> Results = examScoreCardService.getAllExamScoreCards(studentId,studentCourses);
 
-        if(examScoreCards.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }else{
-            return new ResponseEntity<>(examScoreCards,HttpStatus.OK);
-        }
+        return new ResponseEntity<>(Results,HttpStatus.OK);
     }
 
 
