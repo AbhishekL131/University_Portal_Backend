@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.example.College_Management_Portal.Models.Attendance;
@@ -39,6 +40,7 @@ public class AttendanceService {
         }
     }
 
+    @Cacheable(value="attendance",key="#studentCourseId")
     public List<Attendance> getByStudentCourseId(ObjectId studentCourseId){
         return attendanceRepo.findByStudentCourseId(studentCourseId);
     }

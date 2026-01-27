@@ -189,7 +189,7 @@ public class StudentController {
         String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
         List<StudentCourse> studentCourses = studentCourseService.getAllCoursesOfStudent(studentId);
         List<ExamScoreCardDto> Results = examScoreCardService.getAllExamScoreCards(studentId,studentCourses);
-
+        
         return new ResponseEntity<>(Results,HttpStatus.OK);
     }
 
