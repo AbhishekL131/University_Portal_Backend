@@ -54,7 +54,7 @@ public class StudentService {
     }
 
     @Cacheable(value="student",key="#username")
-    public Optional<Student> getStudentByUserName(String username){
+    public Student getStudentByUserName(String username){
         return studentRepo.findStudentByUserName(username);
     }
     

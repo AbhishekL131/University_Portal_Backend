@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.College_Management_Portal.DemoTest.JwtAuth;
 import com.example.College_Management_Portal.Models.Admin;
 import com.example.College_Management_Portal.Models.Faculty;
 import com.example.College_Management_Portal.Models.Student;
@@ -35,6 +36,9 @@ public class LoginController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private JwtAuth jAuth;
 
 
 
@@ -102,12 +106,22 @@ public class LoginController {
     public ResponseEntity<?> login(@RequestBody Student student){
         try{
 
+            System.out.println("we have entered for Login : ");
+            System.out.println("Student UserName : "+student.getUserName());
+
+
             authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(student.getUserName(),student.getPassword())
             );
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(student.getUserName());
 
+            System.out.println("UserDetails : "+userDetails);
+
+            List<?> studentRoles = userDetails.getAuthorities().stream()
+            .toList();
+
+            System.out.println("student Authorities : "+studentRoles);
 
             boolean hasStudentRole = userDetails.getAuthorities().stream()
             .anyMatch(auth -> auth.getAuthority().equals("ROLE_Student"));
@@ -121,6 +135,10 @@ public class LoginController {
             .map(auth -> auth.getAuthority().replace("ROLE_","")).toList();
 
             String jwt = jwtUtil.generateToken(userDetails.getUsername(),roles);
+
+            System.out.println("JWT Token : "+jwt);
+
+            jAuth.getAllJwtDetails(jwt);
 
             return new ResponseEntity<>(jwt,HttpStatus.OK);
 

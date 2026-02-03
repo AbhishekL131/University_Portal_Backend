@@ -15,6 +15,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @Configuration
 @EnableCaching
@@ -28,13 +29,20 @@ public class CacheConfig {
     @Bean
     public RedisCacheConfiguration cacheConfiguration(){
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
+        mapper.activateDefaultTyping(
+            mapper.getPolymorphicTypeValidator(), 
+            ObjectMapper.DefaultTyping.NON_FINAL, 
+            com.fasterxml.jackson.annotation.JsonTypeInfo.As.PROPERTY
+        );
+
         return RedisCacheConfiguration.defaultCacheConfig()
                .entryTtl(Duration.ofMinutes(15))
                .disableCachingNullValues()
                .serializeValuesWith(
                   RedisSerializationContext.SerializationPair
-                  .fromSerializer(new GenericJackson2JsonRedisSerializer()));
+                  .fromSerializer(new GenericJackson2JsonRedisSerializer(mapper)));
     }
 
     @Bean

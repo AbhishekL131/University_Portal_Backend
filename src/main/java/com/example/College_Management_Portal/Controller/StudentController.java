@@ -73,10 +73,10 @@ public class StudentController {
     @GetMapping
     public ResponseEntity<?> getStudent(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Optional<Student> student = studentService.getStudentByUserName(auth.getName());
+        Student student = studentService.getStudentByUserName(auth.getName());
 
-        if(student.isPresent()){
-            return new ResponseEntity<>(student.get(),HttpStatus.OK);
+        if(student != null){
+            return new ResponseEntity<>(student,HttpStatus.OK);
         }else{
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -85,7 +85,7 @@ public class StudentController {
     @GetMapping("/allcourses")
     public ResponseEntity<List<Course>> getAllCoursesOfStudent(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String studentId = studentService.getStudentByUserName(auth.getName()).map(x -> x.getStudentId()).orElseGet(null);
+        String studentId = studentService.getStudentByUserName(auth.getName()).getStudentId();
 
         List<StudentCourse> courses = studentCourseService.getAllCoursesOfStudent(studentId);
 
@@ -108,7 +108,7 @@ public class StudentController {
     @GetMapping("/allfaculties")
     public ResponseEntity<?> getAllFacultiesOfStudent(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String studentId = studentService.getStudentByUserName(auth.getName()).map(x -> x.getStudentId()).orElse(null);
+        String studentId = studentService.getStudentByUserName(auth.getName()).getStudentId();
         List<StudentCourse> studentCourses = studentCourseService.getAllCoursesOfStudent(studentId);
         
         if (studentCourses.isEmpty()) {
@@ -141,7 +141,7 @@ public class StudentController {
     @GetMapping("/getAttendance/{courseId}")
     public ResponseEntity<?> getAttendanceForCourse(@PathVariable String courseId){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
+        String studentId = studentService.getStudentByUserName(auth.getName()).getStudentId();
         List<Attendance> attd = studentCourseService.getStudentAttendance(studentId,courseId);
         if(attd != null){
             return new ResponseEntity<>(attd.stream().map(x -> AttendanceDisplay.fromEntity(x)).toList(),HttpStatus.OK);
@@ -153,7 +153,7 @@ public class StudentController {
     @GetMapping("/getAttendancePercent/{courseId}")
     public ResponseEntity<?> getAttendancePercentForCourse(@PathVariable String courseId){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
+        String studentId = studentService.getStudentByUserName(auth.getName()).getStudentId();
         Optional<StudentCourse> studentCourse = studentCourseService.getStudentCourse(studentId,courseId);
 
         if(studentCourse.isPresent()){
@@ -173,7 +173,7 @@ public class StudentController {
     @GetMapping("/getScoreCard/{courseId}")
     public ResponseEntity<?> getExamScoreCardForCourse(@PathVariable String courseId){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
+        String studentId = studentService.getStudentByUserName(auth.getName()).getStudentId();
         ExamScoreCardDto examScoreCard = examScoreCardService.getStudentExamScoreCard(studentId,courseId);
         Optional<StudentCourse> studentCourse = studentCourseService.getStudentCourse(studentId,courseId);
         if(studentCourse.isPresent()){
@@ -186,7 +186,7 @@ public class StudentController {
     @GetMapping("/getAllScoreCards")
     public ResponseEntity<?> getAllExamScoreCardsOfStudent(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
+        String studentId = studentService.getStudentByUserName(auth.getName()).getStudentId();
         List<StudentCourse> studentCourses = studentCourseService.getAllCoursesOfStudent(studentId);
         List<ExamScoreCardDto> Results = examScoreCardService.getAllExamScoreCards(studentId,studentCourses);
         
@@ -199,7 +199,7 @@ public class StudentController {
     @GetMapping("/getPercentage")
     public ResponseEntity<?> getPercentageMarksOfStudent(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
+        String studentId = studentService.getStudentByUserName(auth.getName()).getStudentId();
         List<StudentCourse> studentCourse = studentCourseService.getAllCoursesOfStudent(studentId);
         long totalMarks = studentCourse.stream()
         .map(sc -> examScoreCardService.getStudentExamScoreCard(studentId,sc.getCourseId()))
@@ -220,7 +220,7 @@ public class StudentController {
     @GetMapping("/AllMessages")
     public ResponseEntity<List<MessageResponseDto>> getAllMessagesOfStudent(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String studentId = studentService.getStudentByUserName(auth.getName()).map(student -> student.getStudentId()).orElse(null);
+        String studentId = studentService.getStudentByUserName(auth.getName()).getStudentId();
         List<Message> messages = messageService.getAllMessagesOfReceiver(studentId);
 
         List<MessageResponseDto> response = messages

@@ -20,7 +20,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter{
-     @Autowired
+    
+    @Autowired
     private UserDetailsService userDetailsService;
 
     @Autowired
@@ -28,10 +29,10 @@ public class JwtFilter extends OncePerRequestFilter{
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-      //  System.out.println("Request : "+request);
+        System.out.println("Request : "+request);
         String authorizationHeader = request.getHeader("Authorization");
 
-      //  System.out.println("Authorization Header : " + authorizationHeader);
+        System.out.println("Authorization Header : " + authorizationHeader);
         
         String username = null;
         String jwt = null;
@@ -40,7 +41,7 @@ public class JwtFilter extends OncePerRequestFilter{
             username = jwtUtil.extractUsername(jwt);
         }
 
-       // System.out.println("username : "+username);
+        System.out.println("username : "+username);
 
         if (username != null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);

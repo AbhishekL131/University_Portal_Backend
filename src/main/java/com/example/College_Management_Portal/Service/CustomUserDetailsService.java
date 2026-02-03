@@ -64,9 +64,9 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
 
 
-        Optional<Student> studentOpt = studentRepo.findStudentByUserName(userName);
-        if(studentOpt.isPresent()){
-            Student student = studentOpt.get();
+        Student studentOpt = studentRepo.findStudentByUserName(userName);
+        if(studentOpt != null){
+            Student student = studentOpt;
 
             if(student.getRoles() == null || student.getRoles().isEmpty()){
                 log.warn("student {} has no roles assigned"+userName);
