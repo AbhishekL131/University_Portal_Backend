@@ -20,6 +20,8 @@ public class JwtUtil {
     private String SECRET_KEY;
 
     private SecretKey getSigningKey() {
+       // System.out.println("Talking about SigningKey : ");
+        // System.out.println(Keys.hmacShaKeyFor(SECRET_KEY.getBytes()));
         return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
     }
 
