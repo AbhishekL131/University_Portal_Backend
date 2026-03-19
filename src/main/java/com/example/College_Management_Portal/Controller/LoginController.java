@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.College_Management_Portal.DemoTest.JwtAuth;
 import com.example.College_Management_Portal.Models.Admin;
 import com.example.College_Management_Portal.Models.Faculty;
 import com.example.College_Management_Portal.Models.Student;
@@ -37,8 +36,6 @@ public class LoginController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @Autowired
-    private JwtAuth jAuth;
 
 
 
@@ -138,7 +135,6 @@ public class LoginController {
 
             System.out.println("JWT Token : "+jwt);
 
-            jAuth.getAllJwtDetails(jwt);
 
             return new ResponseEntity<>(jwt,HttpStatus.OK);
 
