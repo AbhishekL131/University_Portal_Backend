@@ -95,9 +95,9 @@ public class FacultyController {
         List<FacultyCourse> facultyCourse = facultyCourseService.getAllCoursesOfFaculty(facultyId);
         List<String> courseIDs = facultyCourse
         .stream()
-        .map(course -> course.getCourseId())
+        .map(fc -> fc.getCourseId())
         .distinct()
-        .collect(Collectors.toList());
+        .toList();
 
         List<Course> courses = courseService.getAllCoursesWithIDs(facultyId,courseIDs);
 
@@ -107,7 +107,7 @@ public class FacultyController {
 
         return new ResponseEntity<>(courses,HttpStatus.OK);
     }
-
+ 
 
     @GetMapping("/allStudents")
     public ResponseEntity<?> getAllStudentsOfFaculty(){

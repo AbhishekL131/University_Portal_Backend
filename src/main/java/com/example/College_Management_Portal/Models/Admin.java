@@ -21,5 +21,6 @@ public class Admin {
     private String userName;
     @NonNull
     private String password;
+    @NonNull
     private List<String> roles;
 }

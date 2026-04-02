@@ -57,8 +57,11 @@ public class LoginController {
         List<String> roles = userDetails.getAuthorities().stream()
             .map(auth -> auth.getAuthority().replace("ROLE_", ""))
             .toList();
+
+
         String jwt = jwtUtil.generateToken(userDetails.getUsername(), roles);
         return new ResponseEntity<>(jwt,HttpStatus.OK);
+        
        }catch(Exception e){
         log.info("Faculty login failed: {}", e.getMessage());
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -103,8 +106,8 @@ public class LoginController {
     public ResponseEntity<?> login(@RequestBody Student student){
         try{
 
-            System.out.println("we have entered for Login : ");
-            System.out.println("Student UserName : "+student.getUserName());
+           // System.out.println("we have entered for Login : ");
+          //  System.out.println("Student UserName : "+student.getUserName());
 
 
             authenticationManager.authenticate(
@@ -113,12 +116,12 @@ public class LoginController {
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(student.getUserName());
 
-            System.out.println("UserDetails : "+userDetails);
+          //  System.out.println("UserDetails : "+userDetails);
 
             List<?> studentRoles = userDetails.getAuthorities().stream()
             .toList();
 
-            System.out.println("student Authorities : "+studentRoles);
+          //  System.out.println("student Authorities : "+studentRoles);
 
             boolean hasStudentRole = userDetails.getAuthorities().stream()
             .anyMatch(auth -> auth.getAuthority().equals("ROLE_Student"));
