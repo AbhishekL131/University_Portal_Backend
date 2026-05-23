@@ -118,9 +118,6 @@ public class LoginController {
 
           //  System.out.println("UserDetails : "+userDetails);
 
-            List<?> studentRoles = userDetails.getAuthorities().stream()
-            .toList();
-
           //  System.out.println("student Authorities : "+studentRoles);
 
             boolean hasStudentRole = userDetails.getAuthorities().stream()
