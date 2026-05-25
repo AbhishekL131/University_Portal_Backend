@@ -203,7 +203,7 @@ public class StudentController {
         List<StudentCourse> studentCourse = studentCourseService.getAllCoursesOfStudent(studentId);
         long totalMarks = studentCourse.stream()
         .map(sc -> examScoreCardService.getStudentExamScoreCard(studentId,sc.getCourseId()))
-        .mapToInt(examSC -> examSC.getMaxMarks())
+        .mapToInt(examSC -> examSC.getMaxMarks()) 
         .sum();
 
         long obtainedMarks = studentCourse
