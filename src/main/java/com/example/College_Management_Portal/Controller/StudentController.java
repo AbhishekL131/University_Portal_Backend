@@ -94,7 +94,7 @@ public class StudentController {
         .map(sc -> sc.getCourseId())
         .distinct()
         .collect(Collectors.toList());
-        List<Course> StudentCourses = courseService.getAllStudentCoursesWithIDs(studentId,courseIDs);
+        List<Course> StudentCourses = courseService.getAllStudentCoursesWithIDs(courseIDs);
 
         if(StudentCourses.isEmpty()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

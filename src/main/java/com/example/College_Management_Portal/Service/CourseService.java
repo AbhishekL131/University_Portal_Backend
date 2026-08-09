@@ -50,7 +50,7 @@ public class CourseService {
     }
 
     @Cacheable(value="allCoursesOfStudent")
-    public List<Course> getAllStudentCoursesWithIDs(String studentId,List<String> courseIDs){
+    public List<Course> getAllStudentCoursesWithIDs(List<String> courseIDs){
         return courseRepo.findByCourseIdIn(courseIDs);
     }
 }
